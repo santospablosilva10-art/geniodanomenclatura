@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+
+<!-- 📱 RESPONSIVO -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gênio da Nomenclatura</title>
+
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #0f172a, #1e3a8a, #9333ea);
+  color: white;
+  text-align: center;
+  padding: 40px;
+}
+
+.card {
+  background: rgba(30, 41, 59, 0.9);
+  padding: 30px;
+  border-radius: 20px;
+  max-width: 650px;
+  margin: auto;
+}
+
+/* 📱 BOTÕES MELHORES */
+button {
+  display: block;
+  width: 90%;
+  margin: 10px auto;
+  padding: 15px;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 18px;
+  background: linear-gradient(135deg, #3b82f6, #9333ea);
+  color: white;
+}
+
+#nextBtn { display:none; }
+
+/* 🕵️ marca d'água */
+#watermark {
+  position: fixed;
+  bottom: 10px;
+  right: 15px;
+  font-size: 12px;
+  opacity: 0.4;
+}
+
+/* 🎯 botão secreto melhorado */
+#hidden7 {
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+/* 📱 TEXTO AJUSTADO */
+h1 { font-size: 24px; }
+h2 { font-size: 20px; }
+#question { font-size: 22px; }
+
+/* 📱 RESPONSIVO EXTRA */
+@media (max-width: 600px) {
+  body { padding: 15px; }
+  .card { padding: 20px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="card" id="game">
+<h1 onclick="checkAnswer('titulo')">🧠 Gênio da nomenclatura</h1>
+
+<div id="watermark">
+  Jogo criado em <span id="hidden7" onclick="checkAnswer('7')">7</span> abril de 2026
+</div>
+
+<div id="progress"></div>
+<h2 id="question"></h2>
+<div id="answers"></div>
+<p id="result"></p>
+<button id="nextBtn" onclick="nextQuestion()">Continuar</button>
+</div>
+
+<script>
+
+const quiz = [
+
+{
+  question:"Quantos elétrons na camada de valência tem o Iodo?",
+  answers:["1","2","3","4"],
+  correct:"7",
+  special:true
+},
+
+{question:"CH3-CH2-CH3",answers:["Propano","Butano","Etano","Metano"],correct:"Propano"},
+{question:"Qual é O?",answers:["Oxigênio","Hidrogênio","Carbono","Nitrogênio"],correct:"Oxigênio"},
+{question:"CH3-OH",answers:["Metanol","Etanol","Propanol","Butanol"],correct:"Metanol"},
+{question:"escolha a correta",answers:["Eu amo química","michael jackson","certa","Nenhuma"],correct:"Nenhuma"},
+{question:"Clique no título ",answers:["Aqui","Não","título","texto"],correct:"titulo"},
+{question:"CH2=CH2",answers:["Eteno","Etano","Propano","Buteno"],correct:"Eteno"},
+{question:"CH≡CH",answers:["Etino","Etano","Eteno","Propino"],correct:"Etino"},
+{question:"C é?",answers:["não metal","metal de transição","Uma pessoa","gás nobre"],correct:"não metal"},
+{question:"H é?",answers:["Hidrogênio","Hélio","Ferro","Mercúrio"],correct:"Hidrogênio"},
+{question:"CH₃–CH₂–C(CH₃)₂–CH=CH–CH₂–OH",answers:["3,3-dimetil-4-hexen-1-ol","4,4-dimetil-3-hexen-1-ol","4,4-dimetil-2-hexen-2-ol","3,3-dimetil-2-hexen-1-ol"],correct:"4,4-dimetil-2-hexen-1-ol"},
+
+// difíceis
+{question:"CH3-O-CH3 é:",answers:["Éter","Álcool","Cetona","Ácido"],correct:"Éter"},
+{question:"C6H6 é:",answers:["Aromático","Álcool","Alcano","Éter"],correct:"Aromático"},
+{question:"Ciclo com 6 carbonos sem dupla:",answers:["Ciclohexano","Benzeno","Hexano","Eteno"],correct:"Ciclohexano"},
+{question:"Benzeno pertence a:",answers:["Aromáticos","Álcoois","Éteres","Cetonas"],correct:"Aromáticos"},
+{question:"CH3-CH2-O-CH2-CH3 é:",answers:["Éter","Álcool","Aldeído","Ácido"],correct:"Éter"}
+
+];
+
+// completar até 30
+while(quiz.length < 30){
+  quiz.push({...quiz[quiz.length % 10]});
+}
+
+let current = 0;
+let score = 0;
+
+function shuffle(arr){
+  return arr.sort(()=>Math.random()-0.5);
+}
+
+function loadQuestion(){
+  document.getElementById("result").innerText="";
+  document.getElementById("nextBtn").style.display="none";
+
+  const q = quiz[current];
+
+  document.getElementById("question").innerText = q.question;
+  document.getElementById("progress").innerText = `Questão ${current+1}/30`;
+
+  const answersDiv = document.getElementById("answers");
+  answersDiv.innerHTML="";
+  answersDiv.style.display="block";
+
+  shuffle(q.answers).forEach(answer=>{
+    const btn = document.createElement("button");
+    btn.innerText = answer;
+    btn.onclick = () => checkAnswer(answer);
+    answersDiv.appendChild(btn);
+  });
+}
+
+function checkAnswer(answer){
+  const q = quiz[current];
+
+  if(answer === q.correct){
+    score++;
+    document.getElementById("result").innerText="🧠 GENIAL";
+    document.getElementById("nextBtn").style.display="block";
+  } else {
+
+    if(q.special){
+      return;
+    }
+
+    document.getElementById("game").innerHTML=`
+      <h1>💀 FIM</h1>
+      <p>Tava fácil como tu erra essa?</p>
+      <p>${score}/30</p>
+      <button onclick="location.reload()">Recomeçar</button>
+    `;
+  }
+}
+
+function nextQuestion(){
+  current++;
+
+  if(current < 30){
+    loadQuestion();
+  } else {
+    document.getElementById("game").innerHTML=`
+      <h1>🏆 IMPOSSÍVEL!</h1>
+      <p>${score}/30</p>
+      <button onclick="location.reload()">Eu não estudo e devo jogar de novo</button>
+    `;
+  }
+}
+
+loadQuestion();
+
+</script>
+
+</body>
+</html>
