@@ -2,30 +2,69 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-
-<!-- 📱 RESPONSIVO -->
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Gênio da Nomenclatura</title>
+<title>Organo Rush</title>
 
 <style>
 body {
+  margin: 0;
   font-family: 'Segoe UI', sans-serif;
-  background: linear-gradient(135deg, #0f172a, #1e3a8a, #9333ea);
+  background: #0f172a;
   color: white;
   text-align: center;
-  padding: 40px;
+}
+
+/* 📸 CAPA */
+#cover {
+  height: 100vh;
+  background: url("capa.jpg") no-repeat center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.4s ease;
+}
+
+#startBtn {
+  padding: 20px 50px;
+  font-size: 24px;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  background: linear-gradient(135deg, #f97316, #ea580c);
+  color: white;
+  box-shadow: 0 0 25px rgba(0,0,0,0.6);
+  transition: all 0.3s ease;
+}
+
+#startBtn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px #f97316;
+}
+
+#startBtn:active {
+  transform: scale(0.95);
+}
+
+/* 🎮 JOGO */
+#game {
+  display: none;
+  padding: 20px;
+  animation: fadeIn 0.4s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 .card {
   background: rgba(30, 41, 59, 0.9);
-  padding: 30px;
+  padding: 20px;
   border-radius: 20px;
   max-width: 650px;
   margin: auto;
 }
 
-/* 📱 BOTÕES MELHORES */
 button {
   display: block;
   width: 90%;
@@ -37,100 +76,131 @@ button {
   font-size: 18px;
   background: linear-gradient(135deg, #3b82f6, #9333ea);
   color: white;
+  transition: 0.2s;
+}
+
+button:hover {
+  transform: scale(1.05);
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
 #nextBtn { display:none; }
 
-/* 🕵️ marca d'água */
-#watermark {
-  position: fixed;
-  bottom: 10px;
-  right: 15px;
-  font-size: 12px;
-  opacity: 0.4;
+#hintsBox {
+  margin-top: 20px;
+  border-top: 2px solid rgba(255,255,255,0.2);
+  padding-top: 10px;
 }
 
-/* 🎯 botão secreto melhorado */
-#hidden7 {
-  cursor: pointer;
-  padding: 2px 6px;
-}
-
-/* 📱 TEXTO AJUSTADO */
-h1 { font-size: 24px; }
-h2 { font-size: 20px; }
-#question { font-size: 22px; }
-
-/* 📱 RESPONSIVO EXTRA */
-@media (max-width: 600px) {
-  body { padding: 15px; }
-  .card { padding: 20px; }
+/* 📱 mobile */
+@media (max-width: 600px){
+  #startBtn {
+    font-size: 20px;
+    padding: 15px 30px;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<div class="card" id="game">
-<h1 onclick="checkAnswer('titulo')">🧠 Gênio da nomenclatura</h1>
-
-<div id="watermark">
-  Jogo criado em <span id="hidden7" onclick="checkAnswer('7')">7</span> abril de 2026
+<!-- 📸 CAPA -->
+<div id="cover">
+  <button id="startBtn" onclick="startGame()">🔥 COMEÇAR</button>
 </div>
+
+<!-- 🎮 JOGO -->
+<div id="game">
+<div class="card">
+
+<h1>🧠 Organo Rush</h1>
 
 <div id="progress"></div>
 <h2 id="question"></h2>
+
 <div id="answers"></div>
+
+<div id="hintsBox">
+  <button id="btn1" onclick="removeOne()">❌ Tirar 1 (2)</button>
+  <button id="btn2" onclick="removeTwo()">💥 Tirar 2 (2)</button>
+  <button id="btn3" onclick="showHint()">💡 Pista (2)</button>
+</div>
+
 <p id="result"></p>
 <button id="nextBtn" onclick="nextQuestion()">Continuar</button>
+
+</div>
 </div>
 
 <script>
 
-const quiz = [
+let started = false;
 
+// ▶ iniciar jogo (com proteção)
+function startGame(){
+  if(started) return;
+  started = true;
+
+  const cover = document.getElementById("cover");
+  const game = document.getElementById("game");
+
+  cover.style.opacity = "0";
+
+  setTimeout(() => {
+    cover.style.display = "none";
+    game.style.display = "block";
+    loadQuestion();
+  }, 400);
+}
+
+const quiz = [
 {
   question:"Quantos elétrons na camada de valência tem o Iodo?",
   answers:["1","2","3","4"],
   correct:"7",
-  special:true
+  special:true,
+  hint:"Grupo 17 😉"
 },
-
-{question:"CH3-CH2-CH3",answers:["Propano","Butano","Etano","Metano"],correct:"Propano"},
-{question:"Qual é O?",answers:["Oxigênio","Hidrogênio","Carbono","Nitrogênio"],correct:"Oxigênio"},
-{question:"CH3-OH",answers:["Metanol","Etanol","Propanol","Butanol"],correct:"Metanol"},
-{question:"escolha a correta",answers:["Eu amo química","michael jackson","certa","Nenhuma"],correct:"Nenhuma"},
-{question:"Clique no título ",answers:["Aqui","Não","título","texto"],correct:"titulo"},
-{question:"CH2=CH2",answers:["Eteno","Etano","Propano","Buteno"],correct:"Eteno"},
-{question:"CH≡CH",answers:["Etino","Etano","Eteno","Propino"],correct:"Etino"},
-{question:"C é?",answers:["não metal","metal de transição","Uma pessoa","gás nobre"],correct:"não metal"},
-{question:"H é?",answers:["Hidrogênio","Hélio","Ferro","Mercúrio"],correct:"Hidrogênio"},
-{question:"CH₃–CH₂–C(CH₃)₂–CH=CH–CH₂–OH",answers:["3,3-dimetil-4-hexen-1-ol","4,4-dimetil-3-hexen-1-ol","4,4-dimetil-2-hexen-2-ol","3,3-dimetil-2-hexen-1-ol"],correct:"4,4-dimetil-2-hexen-1-ol"},
-
-// difíceis
-{question:"CH3-O-CH3 é:",answers:["Éter","Álcool","Cetona","Ácido"],correct:"Éter"},
-{question:"C6H6 é:",answers:["Aromático","Álcool","Alcano","Éter"],correct:"Aromático"},
-{question:"Ciclo com 6 carbonos sem dupla:",answers:["Ciclohexano","Benzeno","Hexano","Eteno"],correct:"Ciclohexano"},
-{question:"Benzeno pertence a:",answers:["Aromáticos","Álcoois","Éteres","Cetonas"],correct:"Aromáticos"},
-{question:"CH3-CH2-O-CH2-CH3 é:",answers:["Éter","Álcool","Aldeído","Ácido"],correct:"Éter"}
-
+{question:"CH3-CH2-CH3",answers:["Propano","Butano","Etano","Metano"],correct:"Propano",hint:"3 carbonos"},
+{question:"CH3-OH",answers:["Metanol","Etanol","Propanol","Butanol"],correct:"Metanol",hint:"1 carbono"},
+{question:"CH2=CH2",answers:["Eteno","Etano","Propano","Buteno"],correct:"Eteno",hint:"dupla ligação"},
+{question:"CH≡CH",answers:["Etino","Etano","Eteno","Propino"],correct:"Etino",hint:"tripla ligação"}
 ];
 
 // completar até 30
 while(quiz.length < 30){
-  quiz.push({...quiz[quiz.length % 10]});
+  quiz.push({...quiz[quiz.length % 5]});
 }
 
 let current = 0;
 let score = 0;
 
+let removeOneCount = 2;
+let removeTwoCount = 2;
+let hintCount = 2;
+
+let usedHintThisQuestion = false;
+
+// embaralhar
 function shuffle(arr){
   return arr.sort(()=>Math.random()-0.5);
 }
 
+// carregar pergunta
 function loadQuestion(){
+  usedHintThisQuestion = false;
+
   document.getElementById("result").innerText="";
   document.getElementById("nextBtn").style.display="none";
+
+  document.getElementById("btn1").disabled = false;
+  document.getElementById("btn2").disabled = false;
+  document.getElementById("btn3").disabled = false;
 
   const q = quiz[current];
 
@@ -139,16 +209,30 @@ function loadQuestion(){
 
   const answersDiv = document.getElementById("answers");
   answersDiv.innerHTML="";
-  answersDiv.style.display="block";
 
-  shuffle(q.answers).forEach(answer=>{
+  shuffle([...q.answers]).forEach(answer=>{
     const btn = document.createElement("button");
     btn.innerText = answer;
     btn.onclick = () => checkAnswer(answer);
     answersDiv.appendChild(btn);
   });
+
+  updateButtons();
 }
 
+function updateButtons(){
+  document.getElementById("btn1").innerText = `❌ Tirar 1 (${removeOneCount})`;
+  document.getElementById("btn2").innerText = `💥 Tirar 2 (${removeTwoCount})`;
+  document.getElementById("btn3").innerText = `💡 Pista (${hintCount})`;
+}
+
+function disableHints(){
+  document.getElementById("btn1").disabled = true;
+  document.getElementById("btn2").disabled = true;
+  document.getElementById("btn3").disabled = true;
+}
+
+// resposta
 function checkAnswer(answer){
   const q = quiz[current];
 
@@ -157,35 +241,83 @@ function checkAnswer(answer){
     document.getElementById("result").innerText="🧠 GENIAL";
     document.getElementById("nextBtn").style.display="block";
   } else {
-
-    if(q.special){
-      return;
-    }
+    if(q.special) return;
 
     document.getElementById("game").innerHTML=`
       <h1>💀 FIM</h1>
-      <p>Tava fácil como tu erra essa?</p>
       <p>${score}/30</p>
       <button onclick="location.reload()">Recomeçar</button>
     `;
   }
 }
 
+// próxima
 function nextQuestion(){
   current++;
-
   if(current < 30){
     loadQuestion();
   } else {
     document.getElementById("game").innerHTML=`
       <h1>🏆 IMPOSSÍVEL!</h1>
       <p>${score}/30</p>
-      <button onclick="location.reload()">Eu não estudo e devo jogar de novo</button>
+      <button onclick="location.reload()">Jogar novamente</button>
     `;
   }
 }
 
-loadQuestion();
+// dicas
+function removeOne(){
+  if(removeOneCount <= 0 || usedHintThisQuestion) return;
+
+  const q = quiz[current];
+  const buttons = document.querySelectorAll("#answers button");
+
+  for(let btn of buttons){
+    if(btn.innerText !== q.correct){
+      btn.style.display = "none";
+      break;
+    }
+  }
+
+  removeOneCount--;
+  usedHintThisQuestion = true;
+  disableHints();
+  updateButtons();
+}
+
+function removeTwo(){
+  if(removeTwoCount <= 0 || usedHintThisQuestion) return;
+
+  const q = quiz[current];
+  const buttons = document.querySelectorAll("#answers button");
+
+  let removed = 0;
+
+  for(let btn of buttons){
+    if(btn.innerText !== q.correct && removed < 2){
+      btn.style.display = "none";
+      removed++;
+    }
+  }
+
+  removeTwoCount--;
+  usedHintThisQuestion = true;
+  disableHints();
+  updateButtons();
+}
+
+function showHint(){
+  if(hintCount <= 0 || usedHintThisQuestion) return;
+
+  const q = quiz[current];
+
+  document.getElementById("result").innerText = "💡 " + q.hint;
+
+  hintCount--;
+  usedHintThisQuestion = true;
+  disableHints();
+  updateButtons();
+}
 
 </script>
 
